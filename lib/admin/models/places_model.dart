@@ -1,13 +1,13 @@
-import 'dart:convert';
-
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class PlacesModel {
+  final String? docId;
   final String docIDGroup;
   final String name;
   final String description;
   final String urlGoogleMap;
   final List<String> urlImages;
+
   PlacesModel({
+    this.docId,
     required this.docIDGroup,
     required this.name,
     required this.description,
@@ -15,11 +15,8 @@ class PlacesModel {
     required this.urlImages,
   });
 
-  
-
-
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'docIDGroup': docIDGroup,
       'name': name,
       'description': description,
@@ -28,17 +25,14 @@ class PlacesModel {
     };
   }
 
-  factory PlacesModel.fromMap(Map<String, dynamic> map) {
+  factory PlacesModel.fromMap(Map<String, dynamic> map, String docId) {
     return PlacesModel(
-      docIDGroup: (map['docIDGroup'] ?? '') as String,
-      name: (map['name'] ?? '') as String,
-      description: (map['description'] ?? '') as String,
-      urlGoogleMap: (map['urlGoogleMap'] ?? '') as String,
-      urlImages: List<String>.from(map['urlImages'] ?? []),    );
+      docId: docId,
+      docIDGroup: map['docIDGroup'],
+      name: map['name'],
+      description: map['description'],
+      urlGoogleMap: map['urlGoogleMap'],
+      urlImages: List<String>.from(map['urlImages']),
+    );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory PlacesModel.fromJson(String source) =>
-      PlacesModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

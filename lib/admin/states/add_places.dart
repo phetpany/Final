@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,7 @@ import 'package:getwidget/getwidget.dart';
 class AddPlaces extends StatefulWidget {
   final PlacesModel? placeModel;
 
-  const AddPlaces({super.key, this.placeModel });
+  const AddPlaces({super.key, this.placeModel});
 
   @override
   State<AddPlaces> createState() => _AddPlacesState();
@@ -41,7 +40,6 @@ class _AddPlacesState extends State<AddPlaces> {
       nameController.text = widget.placeModel!.name;
       descriptionController.text = widget.placeModel!.description;
       urlGoogleMapController.text = widget.placeModel!.urlGoogleMap;
-      
     }
     AppService().processReadAllGroup();
 
@@ -104,6 +102,10 @@ class _AddPlacesState extends State<AddPlaces> {
                     height: 16,
                   ),
                   if (widget.placeModel != null) updateButton(),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  // if (widget.placeModel != null) deleteButton(),
                 ],
               ),
             ),
@@ -334,7 +336,6 @@ class _AddPlacesState extends State<AddPlaces> {
           urlGoogleMap: urlGoogleMapController.text,
           urlImages: urlImages,
         );
-        print('##2May PlacesModel  --->${placesModel.toMap()}');
 
         await FirebaseFirestore.instance
             .collection('places')
@@ -342,7 +343,7 @@ class _AddPlacesState extends State<AddPlaces> {
             .set(placesModel.toMap())
             .then((value) {
           Get.back();
-          Get.snackbar('Add Places Success', 'ThankYou');
+          Get.snackbar('Insert Place Success', 'ThankYou to Insert Place');
         });
       }
     }
@@ -350,55 +351,49 @@ class _AddPlacesState extends State<AddPlaces> {
 
   void _processUpdate() async {
     if (keyForm.currentState!.validate()) {
-      if (appContrller.xFiles.isEmpty) {
-        appContrller.display.value = true;
+      var urlImages = <String>[];
+      for (var element in appContrller.xFiles) {
+        String? urlImage = await AppService().processUploadImage(
+            path: 'places',
+            file: File(element.path),
+            nameFile: 'places${Random().nextInt(1000)}.jpg');
+
+        if (urlImage != null) {
+          urlImages.add(urlImage);
+        }
+      }
+
+      PlacesModel updatedPlace = PlacesModel(
+        docIDGroup: appContrller.docIDGroups[appContrller.chooseIndexs.last],
+        name: nameController.text,
+        description: descriptionController.text,
+        urlGoogleMap: urlGoogleMapController.text,
+        urlImages: urlImages,
+      );
+
+      if (widget.placeModel != null && widget.placeModel!.docId != null) {
+        String docId = widget.placeModel!.docId!; // Ensure this is set correctly
+
+        print('Updating docId: $docId with data: ${updatedPlace.toMap()}');
+
+        await AppService().processUpdatePlace(docId, updatedPlace);
       } else {
-        appContrller.display.value = false;
-
-        var urlImages = <String>[];
-        for (var element in appContrller.xFiles) {
-          String? urlImage = await AppService().processUploadImage(
-              path: 'places',
-              file: File(element.path),
-              nameFile: 'places${Random().nextInt(1000)}.jpg');
-
-          if (urlImage != null) {
-            urlImages.add(urlImage);
-          }
-        }
-
-        PlacesModel placesModel = PlacesModel(
-          docIDGroup: appContrller.docIDGroups[appContrller.chooseIndexs.last],
-          name: nameController.text,
-          description: descriptionController.text,
-          urlGoogleMap: urlGoogleMapController.text,
-          urlImages: urlImages,
-        );
-
-        if (widget.placeModel != null) {
-          String docId = widget.placeModel!.docIDGroup; // Ensure this is set correctly
-
-          print('Updating docId: $docId with data: ${placesModel.toMap()}');
-
-          await FirebaseFirestore.instance
-              .collection('places')
-              .doc(docId)
-              .update(placesModel.toMap())
-              .then((value) {
-            Get.back();
-            Get.snackbar('Update Places Success', 'ThankYou');
-          }).catchError((error) {
-            print('Failed to update place: $error');
-            Get.snackbar('Update Failed', error.toString());
-          });
-        } else {
-          print('No placeModel found');
-        }
+        print('No placeModel found or docId is null');
       }
     }
   }
 
-  Row updateButton() {
+  // void _processDelete() async {
+  //   if (widget.placeModel != null && widget.placeModel!.docId != null) {
+  //     String docId = widget.placeModel!.docId!; // Ensure this is set correctly
+
+  //     await AppService().processDeletePlace(docId);
+  //   } else {
+  //     print('No placeModel found or docId is null for deletion');
+  //   }
+  // }
+
+  Widget updateButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -415,23 +410,20 @@ class _AddPlacesState extends State<AddPlaces> {
     );
   }
 
-  void _processDelete() async {
-    if (widget.placeModel != null) {
-      String docId = widget.placeModel!.docIDGroup; // Set the document ID of the place you want to delete
-
-      await FirebaseFirestore.instance
-          .collection('places')
-          .doc(docId)
-          .delete()
-          .then((value) {
-        Get.back();
-        Get.snackbar('Delete Places Success', 'ThankYou');
-      }).catchError((error) {
-        print('Failed to delete place: $error');
-        Get.snackbar('Delete Failed', error.toString());
-      });
-    } else {
-      print('No placeModel found for deletion');
-    }
-  }
+  // Widget deleteButton() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       SizedBox(
+  //         width: Get.width * 0.8,
+  //         child: WidgetButton(
+  //           text: 'Delete',
+  //           onPressed: () {
+  //             _processDelete();
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

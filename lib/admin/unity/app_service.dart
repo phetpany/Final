@@ -17,8 +17,8 @@ class AppService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final AppContrller appContrller = Get.put(AppContrller());
   final RxList<UserModel> currentUserModels = <UserModel>[].obs;
-  
 
+  // Photo handling methods
   Future<void> processTakePhoto({required ImageSource source}) async {
     var result = await ImagePicker().pickImage(
       source: source,
@@ -36,17 +36,22 @@ class AppService {
     }
   }
 
+  Future<void> processTakePhotoMulti() async {
+    await ImagePicker().pickMultiImage(maxWidth: 800, maxHeight: 800).then((value) {
+      if (value.isNotEmpty) {
+        appContrller.xFiles.addAll(value);
+      }
+    });
+  }
+
   Future<String?> processUploadImage({
     required String path,
     File? file,
     String? nameFile,
   }) async {
     String? urlImage;
-
     FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-    Reference reference = firebaseStorage
-        .ref()
-        .child('$path/${nameFile ?? appContrller.nameFiles.last}');
+    Reference reference = firebaseStorage.ref().child('$path/${nameFile ?? appContrller.nameFiles.last}');
     UploadTask task = reference.putFile(file ?? appContrller.files.last);
 
     await task.whenComplete(() async {
@@ -55,19 +60,13 @@ class AppService {
     return urlImage;
   }
 
+  // Firestore operations for groups
   Future<void> processInsertGroup({required GroupModel groupModel}) async {
-    FirebaseFirestore.instance
-        .collection('group')
-        .doc()
-        .set(groupModel.toMap());
+    await FirebaseFirestore.instance.collection('group').doc().set(groupModel.toMap());
   }
 
   Future<void> processReadAllGroup() async {
-    FirebaseFirestore.instance
-        .collection('group')
-        .orderBy('nameGroup', descending: true)
-        .get()
-        .then((value) {
+    FirebaseFirestore.instance.collection('group').orderBy('nameGroup', descending: true).get().then((value) {
       if (appContrller.groupModels.isNotEmpty) {
         appContrller.groupModels.clear();
         appContrller.docIDGroups.clear();
@@ -87,60 +86,38 @@ class AppService {
     });
   }
 
-  Future<void> processLaunchUrl({required String url}) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw ' Cannot Open URL';
-    }
-    
-  }
-
-  Future<void> processTakePhotoMulti() async {
-    await ImagePicker()
-        .pickMultiImage(maxWidth: 800, maxHeight: 800)
-        .then((value) {
-      if (value.isNotEmpty) {
-        appContrller.xFiles.addAll(value);
-      }
-    });
-  }
-
-  Future<void> processReadAllPlace() async {
-    await FirebaseFirestore.instance.collection('places').get().then((value) {
-      if (appContrller.placesModels.isNotEmpty) {
-        appContrller.placesModels.clear();
-      }
-
-      if (value.docs.isNotEmpty) {
-        for (var element in value.docs) {
-          PlacesModel placesModel = PlacesModel.fromMap(element.data());
-          appContrller.placesModels.add(placesModel);
-        }
-      }
-    });
-  }
   Future<void> processUpdateGroup({required String docId, required GroupModel groupModel}) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('group')
-          .doc(docId)
-          .update(groupModel.toMap());
+      await FirebaseFirestore.instance.collection('group').doc(docId).update(groupModel.toMap());
     } catch (e) {
       print('Error updating group: $e');
     }
   }
 
-  // Method to delete a group from Firestore
   Future<void> processDeleteGroup({required String docId}) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('group')
-          .doc(docId)
-          .delete();
+      await FirebaseFirestore.instance.collection('group').doc(docId).delete();
     } catch (e) {
       print('Error deleting group: $e');
     }
   }
+
+  // Firestore operations for places
+  Future<void> processReadAllPlace() async {
+  await FirebaseFirestore.instance.collection('places').get().then((value) {
+    if (appContrller.placesModels.isNotEmpty) {
+      appContrller.placesModels.clear();
+    }
+
+    if (value.docs.isNotEmpty) {
+      for (var element in value.docs) {
+        PlacesModel placesModel = PlacesModel.fromMap(element.data(), element.id);
+        appContrller.placesModels.add(placesModel);
+      }
+    }
+  });
+}
+
 
   Future<void> processDeletePlace(String docId) async {
     try {
@@ -159,6 +136,16 @@ class AppService {
       Get.snackbar('Update Failed', 'Failed to update the place');
     }
   }
+
+  // URL launcher
+  Future<void> processLaunchUrl({required String url}) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Cannot Open URL';
+    }
+  }
+
+  // Authentication methods
   Future<void> processCheckAuthen({required String email, required String password}) async {
     try {
       UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
@@ -168,7 +155,6 @@ class AppService {
       await prefs.setString('email', email);
       await prefs.setString('password', password);
 
-      // Check user role and navigate to corresponding page
       String? userRole = await getUserRole(_firebaseAuth.currentUser);
 
       if (userRole == 'admin') {
@@ -192,51 +178,15 @@ class AppService {
   }
 
   Future<String?> getUserRole(User? user) async {
-    // Add logic to get user role from Firebase or other source
-    // Here you should implement the logic to retrieve user role from Firebase or any other backend service
-    // For demonstration purposes, return a dummy role
     if (user != null) {
-      // Example: check user's email for role (this should be replaced with actual logic)
-      if (user.email == 'admin@gmail.com') {
-        return 'admin';
-      } else {
-        return 'user';
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance.collection('user').doc(user.uid).get();
+      if (userDoc.exists) {
+        UserModel userModel = UserModel.fromMap(userDoc.data()!);
+        return userModel.typeUser;
       }
     }
     return null;
   }
-
-  
-
-
-
-//  Future<void> processCheckAuthen({required String email, required String password}) async {
-//   try {
-//     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-//     String uid = userCredential.user!.uid;
-
-//     // Save credentials to shared preferences
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     await prefs.setString('email', email);
-//     await prefs.setString('password', password);
-
-//     // Navigate to the user's home page
-//     Get.offAllNamed('/user');
-//   } catch (e) {
-//     Get.snackbar('Error', e.toString());
-//   }
-// }
-
-// Future<void> processLogout() async {
-//   await FirebaseAuth.instance.signOut();
-
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   await prefs.remove('email');
-//   await prefs.remove('password');
-
-//   // Navigate to the authentication page
-//   Get.offAllNamed('/authen');
-// }
 
   Future<void> processRouteToState({required String docIdUser}) async {
     DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance.collection('user').doc(docIdUser).get();
@@ -248,7 +198,7 @@ class AppService {
 
   Future<void> processCreateNewAccount({required String name, required String email, required String password}) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       String uid = userCredential.user!.uid;
       UserModel userModel = UserModel(name: name, email: email, password: password, typeUser: 'user');
       await FirebaseFirestore.instance.collection('user').doc(uid).set(userModel.toMap());
@@ -259,7 +209,7 @@ class AppService {
     }
   }
 
-  Future<void> _saveCredentials({required String email, required String password, }) async {
+  Future<void> _saveCredentials({required String email, required String password}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', email);
     await prefs.setString('password', password);
@@ -285,19 +235,13 @@ class AppService {
     }
   }
 
+  // Firestore operations for advertisements
   Future<void> processInsertAdvertise({required AdvertiseModel advertiseModel}) async {
-    FirebaseFirestore.instance
-        .collection('advertise')
-        .doc()
-        .set(advertiseModel.toMap());
+    await FirebaseFirestore.instance.collection('advertise').doc().set(advertiseModel.toMap());
   }
 
   Future<void> processReadAllAdvertise() async {
-    FirebaseFirestore.instance
-        .collection('advertise')
-        .orderBy('nameAdvertise', descending: true)
-        .get()
-        .then((value) {
+    FirebaseFirestore.instance.collection('advertise').orderBy('nameAdvertise', descending: true).get().then((value) {
       if (appContrller.advertiseModels.isNotEmpty) {
         appContrller.advertiseModels.clear();
         appContrller.indexs.clear();
@@ -314,4 +258,7 @@ class AppService {
       }
     });
   }
+
+
+  
 }

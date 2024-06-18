@@ -54,14 +54,19 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         
         
-        title: WidgetText(data: ''),
+        title: WidgetText(data: 'LuangPrabang'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: PlacesSearch(places: []));
-            },
-          ),
+  icon: Icon(Icons.search),
+  onPressed: () async {
+    // Fetch places data from Firestore
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('places').get();
+
+    // Show search bar with custom delegate
+    showSearch(context: context, delegate: PlacesSearch(places: snapshot.docs));
+  },
+),
+
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {

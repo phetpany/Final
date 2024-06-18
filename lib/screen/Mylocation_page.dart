@@ -48,7 +48,7 @@ class _MylocationPageState extends State<MylocationPage> {
             children: [
               Container(
                 width: 400,
-                height: 200,
+                height: 50,
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20)),

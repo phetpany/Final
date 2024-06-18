@@ -13,6 +13,7 @@ import 'package:getapi/admin/unity/app_controller.dart';
 import 'package:getapi/admin/unity/app_service.dart';
 import 'package:getapi/admin/widget/widget_button.dart';
 import 'package:getapi/admin/widget/widget_text.dart';
+import 'package:getapi/screen/search_static_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AdminPage extends StatefulWidget {
@@ -112,6 +113,12 @@ class AdminHome extends StatelessWidget {
             text: 'ເພີ່ມສະຖານທີ່ໂຄສະນາ',
             color: Colors.green,
             onPressed: () => Get.to(Advertise()),
+          ),
+          SizedBox(height: 16),
+          buildMenuButton(
+            text: 'ສະຖິຕິການຄົ້ນຫາສະຖານທີ່',
+            color: Color.fromARGB(255, 227, 114, 95),
+            onPressed: () => Get.to(SearchStatisticsPage()),
           ),
         ],
       ),

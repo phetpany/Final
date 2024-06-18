@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getapi/admin/models/places_model.dart';
 import 'package:getapi/admin/states/add_places.dart';
 import 'package:getapi/admin/unity/app_constant.dart';
 import 'package:getapi/admin/unity/app_controller.dart';
@@ -72,42 +73,15 @@ class _ListPlacesState extends State<ListPlaces> {
                           icon: Icon(Icons.edit, color: Colors.blue),
                           onPressed: () {
                             Get.to(AddPlaces(placeModel: appController.placesModels[index]))
-        ?.then((value) => AppService().processReadAllPlace());
-                            // Implement edit functionality
-                            // This could navigate to a screen where you can edit the place details
+                                ?.then((value) => AppService().processReadAllPlace());
                           },
                         ),
                         IconButton(
-  icon: Icon(Icons.delete, color: Colors.red),
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Delete Place"),
-          content: Text("Are you sure you want to delete this place?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Delete"),
-              onPressed: () {
-                
-                
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  },
-),
-
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(appController.placesModels[index]);
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -131,5 +105,37 @@ class _ListPlacesState extends State<ListPlaces> {
       return description.substring(0, 77) + '...';
     }
   }
-  
+
+  void _showDeleteConfirmationDialog(PlacesModel placeModel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Place"),
+          content: Text("Are you sure you want to delete ${placeModel.name}?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Delete"),
+              onPressed: () {
+                _deletePlace(placeModel);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deletePlace(PlacesModel placeModel) {
+    AppService().processDeletePlace(placeModel.docId!);
+    // Optionally, you can refresh the list after deletion
+    AppService().processReadAllPlace();
+  }
 }
