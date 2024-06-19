@@ -10,6 +10,8 @@ class SearchStatisticsPage extends StatefulWidget {
 class _SearchStatisticsPageState extends State<SearchStatisticsPage> {
   final PlaceSearchService _placeSearchService = PlaceSearchService();
   late Future<List<PlaceSearch>> _placesFuture;
+  int totalUniquePlaces = 0;
+  int totalSearches = 0;
 
   @override
   void initState() {
@@ -35,64 +37,92 @@ class _SearchStatisticsPageState extends State<SearchStatisticsPage> {
           }
 
           List<PlaceSearch> placeSearches = snapshot.data ?? [];
+          totalUniquePlaces = placeSearches.length;
+          totalSearches = placeSearches.fold(0, (sum, item) => sum + item.searchCount);
 
-          return ListView.builder(
-            itemCount: placeSearches.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(placeSearches[index].name),
-                subtitle: Text('Search Count: ${placeSearches[index].searchCount}'),
-              );
-            },
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Total Unique Places: $totalUniquePlaces',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Total Searches: $totalSearches',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: placeSearches.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(placeSearches[index].name),
+                      subtitle: Text('Search Count: ${placeSearches[index].searchCount}'),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
     );
   }
-  
 }
+
+
 class PlaceSearchService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Function to increment search count for a place
-Future<void> incrementSearchCount(String placeId) async {
-  try {
-    // Reference to the place document
-    DocumentReference placeRef = _firestore.collection('place_searches').doc(placeId);
+  Future<void> incrementSearchCount(String placeId) async {
+    try {
+      // Reference to the place document
+      DocumentReference placeRef = _firestore.collection('place_searches').doc(placeId);
 
-    // Use a transaction to ensure atomic updates
-    await _firestore.runTransaction((transaction) async {
-      DocumentSnapshot snapshot = await transaction.get(placeRef);
-      if (snapshot.exists) {
-        // Update the searchCount field
-        int newSearchCount = (snapshot.data() as Map<String, dynamic>?)?['searchCount'] ?? 0;
-        newSearchCount++; // Increment search count
-        transaction.update(placeRef, {'searchCount': newSearchCount});
-      } else {
-        // Create a new document if it doesn't exist (although it should exist)
-        transaction.set(placeRef, {'searchCount': 1});
-      }
-    });
-  } catch (e) {
-    print('Error incrementing search count: $e');
+      // Use a transaction to ensure atomic updates
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(placeRef);
+        if (snapshot.exists) {
+          // Update the searchCount field
+          int newSearchCount = (snapshot.data() as Map<String, dynamic>?)?['searchCount'] ?? 0;
+          newSearchCount++; // Increment search count
+          transaction.update(placeRef, {'searchCount': newSearchCount});
+        } else {
+          // Create a new document if it doesn't exist
+          transaction.set(placeRef, {'searchCount': 1});
+        }
+      });
+    } catch (e) {
+      print('Error incrementing search count: $e');
+    }
   }
-}
-
 
   // Function to fetch all place search statistics
   Future<List<PlaceSearch>> getAllPlaceSearches() async {
     List<PlaceSearch> placeSearches = [];
 
-    // Fetch documents from 'place_searches' collection
-    QuerySnapshot snapshot = await _firestore.collection('place_searches').get();
-    snapshot.docs.forEach((doc) {
-      placeSearches.add(PlaceSearch.fromMap(doc.data() as Map<String, dynamic>, doc.id));
-    });
+    try {
+      // Fetch documents from 'place_searches' collection
+      QuerySnapshot snapshot = await _firestore.collection('place_searches').get();
+      snapshot.docs.forEach((doc) {
+        placeSearches.add(PlaceSearch.fromMap(doc.data() as Map<String, dynamic>, doc.id));
+      });
 
-    // Sort places by search count (descending)
-    placeSearches.sort((a, b) => b.searchCount.compareTo(a.searchCount));
+      // Sort places by search count (descending)
+      placeSearches.sort((a, b) => b.searchCount.compareTo(a.searchCount));
+    } catch (e) {
+      print('Error fetching place searches: $e');
+    }
 
     return placeSearches;
   }
 }
+
+
 

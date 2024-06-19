@@ -283,75 +283,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SizedBox(height: 10),
             Expanded(
-      flex: 3,
-      child: FutureBuilder(
-        future: FirebaseFirestore.instance.collection('places').get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          var documents = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: documents.length,
-            itemBuilder: (context, index) {
-              var place = documents[index];
-              String imageUrl = (documents[index]['urlImages'] is List)
-                  ? documents[index]['urlImages'][0]
-                  : documents[index]['urlImages'];
-              return Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                margin: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                child: ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaceDetails(
-                          name: place['name'],
-                          description: place['description'],
-                          imageUrls: List<String>.from(place['urlImages']),
-                          googleMapsUrl: place['urlGoogleMap'],
-                        ),
-                      ),
-                    );
-                  },
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                      width: 100,
-                      height: 300,
-                      fit: BoxFit.cover,
+  flex: 3,
+  child: FutureBuilder(
+    future: FirebaseFirestore.instance.collection('places').get(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      }
+      if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      }
+      var documents = snapshot.data!.docs;
+      return ListView.builder(
+        itemCount: documents.length,
+        itemBuilder: (context, index) {
+          var place = documents[index];
+          String imageUrl = (documents[index]['urlImages'] is List)
+              ? documents[index]['urlImages'][0]
+              : documents[index]['urlImages'];
+          return Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Adjust margin
+            child: ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaceDetails(
+                      name: place['name'],
+                      description: place['description'],
+                      imageUrls: List<String>.from(place['urlImages']),
+                      googleMapsUrl: place['urlGoogleMap'],
                     ),
                   ),
-                  title: Text(documents[index]['name']),
-                  subtitle: Text(
-                    documents[index]['description'],
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-            
-                ),
                 );
-            }
-              );
-            },
-          
-          ),
+              },
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  width: 100,
+                  height: 100, // Adjust height to fit within ListTile
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Text(
+                documents[index]['name'],
+                style: TextStyle(fontSize: 16), // Adjust font size if needed
+              ),
+              subtitle: Text(
+                documents[index]['description'],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          );
+        },
+      );
+    },
+  ),
+),
 
-          
-        
-        
-          
-        ),
           ]
           
       ),
