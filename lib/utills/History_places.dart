@@ -13,7 +13,7 @@ class HistoryPlaces extends StatelessWidget {
       required this.imgProvider,
       required this.textTitle,
       required this.textSubtitle,
-      required this.textOpenhour})
+      required this.textOpenhour,})
       : super(key: key);
 
   @override

@@ -12,13 +12,14 @@ import 'package:image_picker/image_picker.dart';
 
 class AppContrller extends GetxController {
 
-  RxList files = <File>[].obs;
+   RxList<dynamic> files = <dynamic>[].obs; 
   RxList nameFiles = <String>[].obs;
   RxBool display = false.obs;
 
   RxList groupModels = <GroupModel>[].obs;
   RxList advertiseModels = <AdvertiseModel>[].obs;
   RxList docIDGroups = <String>[].obs;
+  RxList docIDAdvertises = <String>[].obs;
 
   // RxList choosegroupModels = <GroupModel?>[null].obs;
   RxList chooseIndexs = <int?>[null].obs;

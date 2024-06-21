@@ -115,8 +115,8 @@ class _HomePageState extends State<HomePage> {
                 iconSize: 25,
               ),
               GButton(
-                icon: Icons.history,
-                text: 'History',
+                icon: Icons.ads_click_rounded,
+                text: 'travel agency',
                 iconSize: 25,
               ),
               GButton(

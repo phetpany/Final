@@ -114,6 +114,7 @@ class AdminHome extends StatelessWidget {
             color: Colors.green,
             onPressed: () => Get.to(Advertise()),
           ),
+           
           SizedBox(height: 16),
           buildMenuButton(
             text: 'ສະຖິຕິການຄົ້ນຫາສະຖານທີ່',

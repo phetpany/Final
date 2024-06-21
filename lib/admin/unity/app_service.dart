@@ -7,6 +7,7 @@ import 'package:getapi/admin/models/advertise_model.dart';
 import 'package:getapi/admin/models/group_model.dart';
 import 'package:getapi/admin/models/places_model.dart';
 import 'package:getapi/admin/models/user_model.dart';
+import 'package:getapi/admin/states/add_advertise.dart';
 import 'package:getapi/admin/unity/app_controller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -240,10 +241,11 @@ class AppService {
     await FirebaseFirestore.instance.collection('advertise').doc().set(advertiseModel.toMap());
   }
 
-  Future<void> processReadAllAdvertise() async {
+ Future<void> processReadAllAdvertise() async {
     FirebaseFirestore.instance.collection('advertise').orderBy('nameAdvertise', descending: true).get().then((value) {
       if (appContrller.advertiseModels.isNotEmpty) {
         appContrller.advertiseModels.clear();
+        appContrller.docIDAdvertises.clear();
         appContrller.indexs.clear();
       }
 
@@ -252,11 +254,28 @@ class AppService {
         for (var element in value.docs) {
           AdvertiseModel advertiseModel = AdvertiseModel.fromMap(element.data());
           appContrller.advertiseModels.add(advertiseModel);
+          appContrller.docIDAdvertises.add(element.id);
           appContrller.indexs.add(i);
           i++;
         }
       }
     });
+  }
+
+    Future<void> processUpdateAdvertise({required String docId, required AdvertiseModel advertiseModel}) async {
+    try {
+      await FirebaseFirestore.instance.collection('advertise').doc(docId).update(advertiseModel.toMap());
+    } catch (e) {
+      print('Error updating advertise: $e');
+    }
+  }
+
+  Future<void> processDeleteAdvertise({required String docId}) async {
+    try {
+      await FirebaseFirestore.instance.collection('advertise').doc(docId).delete();
+    } catch (e) {
+      print('Error deleting advertise: $e');
+    }
   }
 
 

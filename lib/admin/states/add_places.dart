@@ -383,15 +383,7 @@ class _AddPlacesState extends State<AddPlaces> {
     }
   }
 
-  // void _processDelete() async {
-  //   if (widget.placeModel != null && widget.placeModel!.docId != null) {
-  //     String docId = widget.placeModel!.docId!; // Ensure this is set correctly
-
-  //     await AppService().processDeletePlace(docId);
-  //   } else {
-  //     print('No placeModel found or docId is null for deletion');
-  //   }
-  // }
+ 
 
   Widget updateButton() {
     return Row(
@@ -410,20 +402,5 @@ class _AddPlacesState extends State<AddPlaces> {
     );
   }
 
-  // Widget deleteButton() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       SizedBox(
-  //         width: Get.width * 0.8,
-  //         child: WidgetButton(
-  //           text: 'Delete',
-  //           onPressed: () {
-  //             _processDelete();
-  //           },
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+
 }

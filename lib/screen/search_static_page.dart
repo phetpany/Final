@@ -37,37 +37,55 @@ class _SearchStatisticsPageState extends State<SearchStatisticsPage> {
           }
 
           List<PlaceSearch> placeSearches = snapshot.data ?? [];
-          totalUniquePlaces = placeSearches.length;
-          totalSearches = placeSearches.fold(0, (sum, item) => sum + item.searchCount);
+          int totalUniquePlaces = placeSearches.length;
+          int totalSearches = placeSearches.fold(0, (sum, item) => sum + item.searchCount);
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Total Unique Places: $totalUniquePlaces',
-                  style: TextStyle(fontSize: 20),
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Card(
+                  color: Color.fromARGB(255, 30, 82, 108),
+                  elevation: 4.0,
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: ListTile(
+                    title: Text(
+                      'Total Unique Places: $totalUniquePlaces',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Total Searches: $totalSearches',
-                  style: TextStyle(fontSize: 20),
+                Card(
+                  color: Colors.blueGrey[300],
+                  elevation: 4.0,
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: ListTile(
+                    title: Text(
+                      'Total Searches: $totalSearches',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: placeSearches.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(placeSearches[index].name),
-                      subtitle: Text('Search Count: ${placeSearches[index].searchCount}'),
-                    );
-                  },
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: placeSearches.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 4.0,
+                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+                        child: ListTile(
+                          title: Text(
+                            placeSearches[index].name,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          subtitle: Text('Search Count: ${placeSearches[index].searchCount}'),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

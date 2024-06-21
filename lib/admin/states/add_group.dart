@@ -219,108 +219,123 @@ class _AddGroupState extends State<AddGroup> {
   }
 
   // Method to show the edit group dialog
-  void _editGroupDialog({required String docId, required GroupModel groupModel}) {
-    textEditingController.text = groupModel.nameGroup;
-    appController.files.clear();
-    appController.files.add(File(groupModel.urlImage));
+void _editGroupDialog({required String docId, required GroupModel groupModel}) {
+  textEditingController.text = groupModel.nameGroup;
+  appController.files.clear();
+  appController.files.add(groupModel.urlImage);  // Store URL instead of File
 
-    AppDialog().normalDialog(
-      title: 'Edit Group',
-      contentWidget: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: Stack(
-                  children: [
-                    Obx(
-                      () => appController.files.isEmpty
-                          ? WidgetImageAssets(
-                              pathImage: 'assets/images/location.png',
-                            )
-                          : WidgetAvatar(
-                              radius: 100,
-                              backgroundImage:
-                                  FileImage(appController.files.last),
-                            ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: WidgetIconButton(
-                        iconData: Icons.add_photo_alternate,
-                        onPress: () {
-                          AppService().processTakePhoto(
-                              source: ImageSource.gallery);
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Obx(() => appController.display.value
-                  ? WidgetText(
-                      data: 'Please Choose Photo',
-                      style: AppConstant().h3Style(color: GFColors.DANGER),
-                    )
-                  : const SizedBox()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+  AppDialog().normalDialog(
+    title: 'Edit Group',
+    contentWidget: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 200,
+              height: 200,
+              child: Stack(
                 children: [
-                  SizedBox(
-                    width: 250,
-                    child: Form(
-                      key: keyForm,
-                      child: WidgetForm(
-                        controller: textEditingController,
-                        validator: (p0) {
-                          if (p0?.isEmpty ?? true) {
-                            return 'Please Fill Name Group';
-                          } else {
-                            return null;
-                          }
-                        },
-                        label: WidgetText(data: 'Name Group'),
-                        hintText: '',
-                      ),
-                    ),
+                  Obx(
+                    () {
+                      if (appController.files.isEmpty) {
+                        return WidgetImageAssets(
+                          pathImage: 'assets/images/location.png',
+                        );
+                      } else {
+                        var file = appController.files.last;
+                        if (file is String) {
+                          return CircleAvatar(
+                            radius: 100,
+                            backgroundImage: NetworkImage(file),
+                          );
+                        } else if (file is File) {
+                          return CircleAvatar(
+                            radius: 100,
+                            backgroundImage: FileImage(file),
+                          );
+                        } else {
+                          return WidgetImageAssets(
+                            pathImage: 'assets/images/location.png',
+                          );
+                        }
+                      }
+                    },
                   ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: WidgetIconButton(
+                      iconData: Icons.add_photo_alternate,
+                      onPress: () {
+                        AppService().processTakePhoto(source: ImageSource.gallery);
+                      },
+                    ),
+                  )
                 ],
               ),
-            ],
-          ),
-        ],
-      ),
-      firstWidget: WidgetButton(
-        text: 'Save',
-        onPressed: () {
-          if (appController.files.isEmpty) {
-            appController.display.value = true;
-          } else if (keyForm.currentState!.validate()) {
-            Get.back();
+            ),
+            Obx(() => appController.display.value
+                ? WidgetText(
+                    data: 'Please Choose Photo',
+                    style: AppConstant().h3Style(color: GFColors.DANGER),
+                  )
+                : const SizedBox()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 250,
+                  child: Form(
+                    key: keyForm,
+                    child: WidgetForm(
+                      controller: textEditingController,
+                      validator: (p0) {
+                        if (p0?.isEmpty ?? true) {
+                          return 'Please Fill Name Group';
+                        } else {
+                          return null;
+                        }
+                      },
+                      label: WidgetText(data: 'Name Group'),
+                      hintText: '',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+    firstWidget: WidgetButton(
+      text: 'Save',
+      onPressed: () {
+        if (appController.files.isEmpty) {
+          appController.display.value = true;
+        } else if (keyForm.currentState!.validate()) {
+          Get.back();
 
-            AppService().processUploadImage(path: 'group').then((value) {
-              String? urlImage = value ?? groupModel.urlImage;
+          AppService().processUploadImage(path: 'group').then((value) {
+            String? urlImage = value ?? groupModel.urlImage;
 
-              GroupModel updatedGroupModel = GroupModel(
-                nameGroup: textEditingController.text,
-                urlImage: urlImage,
-              );
+            GroupModel updatedGroupModel = GroupModel(
+              nameGroup: textEditingController.text,
+              urlImage: urlImage,
+            );
 
-              AppService()
-                  .processUpdateGroup(docId: docId, groupModel: updatedGroupModel)
-                  .then((value) => AppService().processReadAllGroup());
-            });
-          }
-        },
-        type: GFButtonType.transparent,
-      ),
-    );
-  }
+            AppService()
+                .processUpdateGroup(docId: docId, groupModel: updatedGroupModel)
+                .then((value) => AppService().processReadAllGroup());
+          });
+        }
+      },
+      type: GFButtonType.transparent,
+    ),
+  );
+}
+
 
   // Method to delete a group
   void _deleteGroup(String docId) {

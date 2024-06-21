@@ -60,27 +60,7 @@ class _MylocationPageState extends State<MylocationPage> {
               SizedBox(
                 height: 5,
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 70,
-                ),
-                child: Container(
-                  width: 250,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.blue[900],
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      "17KM 31min",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-              ),
+             
             ],
           ),
         ),

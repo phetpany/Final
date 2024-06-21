@@ -23,21 +23,7 @@ class HistoryPage extends StatefulWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-                Container(
-                        width: 250,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.blue[500],
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text("History",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
+               
                       SizedBox(height: 5,),
                       Expanded(
                     child: ListView(
@@ -51,7 +37,7 @@ class HistoryPage extends StatefulWidget {
                      HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
                      HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
                      HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
-                    HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
+                    HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Developing", textTitle: "continue",textOpenhour: "developing",),
                         ],)
                       ],
                     
