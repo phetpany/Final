@@ -92,36 +92,66 @@ class AdminHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> menuItems = [
+      {
+        'text': 'ເພີ່ມໝວດໝູ່',
+        'color': Colors.purple,
+        'onPressed': () => Get.to(AddGroup()),
+      },
+      {
+        'text': 'ເພີ່ມສະຖານທີ່',
+        'color': Colors.blue,
+        'onPressed': () => Get.to(ListPlaces()),
+      },
+      {
+        'text': 'ເພີ່ມສະຖານທີ່ໂຄສະນາ',
+        'color': Colors.green,
+        'onPressed': () => Get.to(Advertise()),
+      },
+      {
+        'text': 'ສະຖິຕິການຄົ້ນຫາສະຖານທີ່',
+        'color': Color.fromARGB(255, 227, 114, 95),
+        'onPressed': () => Get.to(SearchStatisticsPage()),
+      },
+    ];
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildMenuButton(
-            text: 'ເພີ່ມໝວດໝູ່',
-            color: Colors.purple,
-            onPressed: () => Get.to(AddGroup()),
-          ),
-          SizedBox(height: 16),
-          buildMenuButton(
-            text: 'ເພີ່ມສະຖານທີ່',
-            color: Colors.blue,
-            onPressed: () => Get.to(ListPlaces()),
-          ),
-          SizedBox(height: 16),
-          buildMenuButton(
-            text: 'ເພີ່ມສະຖານທີ່ໂຄສະນາ',
-            color: Colors.green,
-            onPressed: () => Get.to(Advertise()),
-          ),
-           
-          SizedBox(height: 16),
-          buildMenuButton(
-            text: 'ສະຖິຕິການຄົ້ນຫາສະຖານທີ່',
-            color: Color.fromARGB(255, 227, 114, 95),
-            onPressed: () => Get.to(SearchStatisticsPage()),
-          ),
-        ],
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns
+          crossAxisSpacing: 16, // Horizontal spacing between items
+          mainAxisSpacing: 16, // Vertical spacing between items
+          childAspectRatio: 2, // Aspect ratio of the items
+        ),
+        itemCount: menuItems.length,
+        itemBuilder: (context, index) {
+          final item = menuItems[index];
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: item['color'],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: item['onPressed'],
+              child: Text(
+                item['text'],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

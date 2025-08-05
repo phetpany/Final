@@ -11,8 +11,10 @@ import 'package:getapi/admin/widget/widget_button.dart';
 import 'package:getapi/admin/widget/widget_form.dart';
 import 'package:getapi/admin/widget/widget_icon_button.dart';
 import 'package:getapi/admin/widget/widget_image_file.dart';
+import 'package:getapi/admin/widget/widget_image_network.dart';
 import 'package:getapi/admin/widget/widget_text.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPlaces extends StatefulWidget {
   final PlacesModel? placeModel;
@@ -24,7 +26,7 @@ class AddPlaces extends StatefulWidget {
 }
 
 class _AddPlacesState extends State<AddPlaces> {
-  AppContrller appContrller = Get.put(AppContrller());
+  final AppContrller appController = Get.put(AppContrller());
 
   final keyForm = GlobalKey<FormState>();
 
@@ -40,13 +42,56 @@ class _AddPlacesState extends State<AddPlaces> {
       nameController.text = widget.placeModel!.name;
       descriptionController.text = widget.placeModel!.description;
       urlGoogleMapController.text = widget.placeModel!.urlGoogleMap;
+      // Populate selected group index
+      int groupIndex = appController.docIDGroups.indexOf(widget.placeModel!.docIDGroup);
+      if (groupIndex != -1) {
+        appController.chooseIndexs.add(groupIndex);
+      }
+      // Populate images
+      appController.xFiles.clear();
+      appController.networkImageUrls.clear(); // Ensure it's cleared before adding new ones
+      for (var imageUrl in widget.placeModel!.urlImages) {
+        appController.networkImageUrls.add(imageUrl);
+      }
     }
     AppService().processReadAllGroup();
+    appController.display.value = false;
+  }
 
-    if (appContrller.xFiles.isNotEmpty) {
-      appContrller.xFiles.clear();
-    }
-    appContrller.display.value = false;
+  void showImageOptions(int index) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.edit),
+              title: Text('Change Image'),
+              onTap: () async {
+                Navigator.pop(context);
+                final ImagePicker _picker = ImagePicker();
+                final XFile? newImage = await _picker.pickImage(source: ImageSource.gallery);
+                if (newImage != null) {
+                  // Replace the network image with the new image
+                  appController.xFiles.add(newImage);
+                  appController.networkImageUrls.removeAt(index);
+                }
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text('Delete Image'),
+              onTap: () {
+                Navigator.pop(context);
+                // Delete the network image
+                appController.networkImageUrls.removeAt(index);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -105,7 +150,6 @@ class _AddPlacesState extends State<AddPlaces> {
                   const SizedBox(
                     height: 16,
                   ),
-                  // if (widget.placeModel != null) deleteButton(),
                 ],
               ),
             ),
@@ -130,8 +174,8 @@ class _AddPlacesState extends State<AddPlaces> {
     );
   }
 
-  RenderObjectWidget validateImage() {
-    return appContrller.display.value
+  Widget validateImage() {
+    return appController.display.value
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -153,24 +197,45 @@ class _AddPlacesState extends State<AddPlaces> {
       children: [
         SizedBox(
           width: Get.width * 0.8,
-          child: appContrller.xFiles.isEmpty
+          child: appController.xFiles.isEmpty && appController.networkImageUrls.isEmpty
               ? const SizedBox()
               : GridView.builder(
-                  itemCount: appContrller.xFiles.length,
+                  itemCount: appController.xFiles.length + appController.networkImageUrls.length,
                   physics: const ScrollPhysics(),
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisSpacing: 4,
                       crossAxisSpacing: 4,
                       crossAxisCount: 3),
-                  itemBuilder: (context, index) => SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: WidgetImageFile(
-                      file: File(appContrller.xFiles[index].path),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  itemBuilder: (context, index) {
+                    if (index < appController.networkImageUrls.length) {
+                      return GestureDetector(
+                        onTap: () => showImageOptions(index),
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: WidgetImageNetwork(
+                            fit: BoxFit.cover,
+                            urlImage: appController.networkImageUrls[index],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return GestureDetector(
+                        onTap: () {
+                          // Add functionality to change or delete new images if needed
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: WidgetImageFile(
+                            file: File(appController.xFiles[index - appController.networkImageUrls.length].path),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
         ),
       ],
@@ -274,7 +339,7 @@ class _AddPlacesState extends State<AddPlaces> {
   }
 
   Widget dropDownGroup() {
-    return appContrller.indexs.isEmpty
+    return appController.indexs.isEmpty
         ? const SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -283,26 +348,25 @@ class _AddPlacesState extends State<AddPlaces> {
                 width: Get.width * 0.8,
                 child: DropdownButtonFormField(
                   validator: (value) {
-                    if (appContrller.chooseIndexs.last == null) {
+                    if (appController.chooseIndexs.last == null) {
                       return 'Please Choose Group';
                     } else {
                       return null;
                     }
                   },
                   isExpanded: true,
-                  value: appContrller.chooseIndexs.last,
+                  value: appController.chooseIndexs.last,
                   hint: const WidgetText(data: 'Please Choose Group'),
-                  items: appContrller.indexs
+                  items: appController.indexs
                       .map(
                         (element) => DropdownMenuItem(
-                          child: WidgetText(
-                              data: appContrller.groupModels[element].nameGroup),
+                          child: WidgetText(data: appController.groupModels[element].nameGroup),
                           value: element,
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
-                    appContrller.chooseIndexs.add(value);
+                    appController.chooseIndexs.add(value);
                   },
                 ),
               ),
@@ -312,13 +376,13 @@ class _AddPlacesState extends State<AddPlaces> {
 
   void processSave() async {
     if (keyForm.currentState!.validate()) {
-      if (appContrller.xFiles.isEmpty) {
-        appContrller.display.value = true;
+      if (appController.xFiles.isEmpty) {
+        appController.display.value = true;
       } else {
-        appContrller.display.value = false;
+        appController.display.value = false;
 
         var urlImages = <String>[];
-        for (var element in appContrller.xFiles) {
+        for (var element in appController.xFiles) {
           String? urlImage = await AppService().processUploadImage(
               path: 'places',
               file: File(element.path),
@@ -330,7 +394,7 @@ class _AddPlacesState extends State<AddPlaces> {
         }
 
         PlacesModel placesModel = PlacesModel(
-          docIDGroup: appContrller.docIDGroups[appContrller.chooseIndexs.last],
+          docIDGroup: appController.docIDGroups[appController.chooseIndexs.last],
           name: nameController.text,
           description: descriptionController.text,
           urlGoogleMap: urlGoogleMapController.text,
@@ -343,16 +407,16 @@ class _AddPlacesState extends State<AddPlaces> {
             .set(placesModel.toMap())
             .then((value) {
           Get.back();
-          Get.snackbar('Insert Place Success', 'ThankYou to Insert Place');
+          Get.snackbar('Insert Place Success', 'Thank you for adding the place');
         });
       }
     }
   }
 
-  void _processUpdate() async {
+  void processUpdate() async {
     if (keyForm.currentState!.validate()) {
       var urlImages = <String>[];
-      for (var element in appContrller.xFiles) {
+      for (var element in appController.xFiles) {
         String? urlImage = await AppService().processUploadImage(
             path: 'places',
             file: File(element.path),
@@ -363,8 +427,11 @@ class _AddPlacesState extends State<AddPlaces> {
         }
       }
 
+      // Include existing images in the update
+      urlImages.addAll(appController.networkImageUrls);
+
       PlacesModel updatedPlace = PlacesModel(
-        docIDGroup: appContrller.docIDGroups[appContrller.chooseIndexs.last],
+        docIDGroup: appController.docIDGroups[appController.chooseIndexs.last],
         name: nameController.text,
         description: descriptionController.text,
         urlGoogleMap: urlGoogleMapController.text,
@@ -372,7 +439,7 @@ class _AddPlacesState extends State<AddPlaces> {
       );
 
       if (widget.placeModel != null && widget.placeModel!.docId != null) {
-        String docId = widget.placeModel!.docId!; // Ensure this is set correctly
+        String docId = widget.placeModel!.docId!;
 
         print('Updating docId: $docId with data: ${updatedPlace.toMap()}');
 
@@ -383,8 +450,6 @@ class _AddPlacesState extends State<AddPlaces> {
     }
   }
 
- 
-
   Widget updateButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -394,13 +459,11 @@ class _AddPlacesState extends State<AddPlaces> {
           child: WidgetButton(
             text: 'Update',
             onPressed: () {
-              _processUpdate();
+              processUpdate();
             },
           ),
         ),
       ],
     );
   }
-
-
 }

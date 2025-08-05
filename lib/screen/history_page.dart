@@ -7,55 +7,47 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import '../utills/popular_places_list.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({ Key? key }) : super(key: key);
+  const HistoryPage({Key? key}) : super(key: key);
 
   @override
   _HistoryPageState createState() => _HistoryPageState();
 }
 
- class _HistoryPageState extends State<HistoryPage> {
+class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[100],
+      
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-               
-                      SizedBox(height: 5,),
-                      Expanded(
-                    child: ListView(
-                      scrollDirection: Axis.vertical,
+              SizedBox(
+                height: 5,
+              ),
+              Expanded(
+                child: ListView(
+                  scrollDirection: Axis.vertical,
+                  children: [
+                    Column(
                       children: [
-                        Column(children: [
-                          HistoryPlaces(imgProvider: AssetImage("assets/images/image1.png"), textSubtitle: "You know I want you It's not a secret I try to hide I know you want me So don't keep sayin' our hands are tied You claim it's not in the cards And fate is pullin' you miles away And out of reach from me But you're here in my heart So who can stop me if I decide That you're my destiny? What if we rewrite the stars? Say you were made to be mine Nothing could keep us apart You'd be the one I was meant to find It's up to you, and it's up to me No one can say what we get to be So why don't we rewrite the stars? Maybe the world could be ours Tonight You think it's easy You think I don't wanna run to you But there are mountains And there are doors that we can't walk through I know you're wondering why because we're able to be Just you and me within these walls But when we go outside, you're gonna wake up and see That it was hopeless after all No one can rewrite the stars How can you say you'll be mine? Everything keeps us apart And I'm not the one you were meant to find It's not up to you It's not up to me When everyone tells us what we can be How can we rewrite the stars? Say that the world can be ours Tonight All I want is to fly with you All I want is to fall with you So just give me all of you It feels impossible It's not impossible Is it impossible? Say that it's possible How do we rewrite the stars? Say you were made to be mine? Nothing can keep us apart 'Cause you are the one I was meant to find It's up to you And it's up to me No one can say what we get to be And why don't we rewrite the stars? Changing the world to be ours You know I want you It's not a secret I try to hide But I can't have you We're bound to break and my hands are tied", textTitle: "Wat XeingThong", textOpenhour: "10AM-9PM",), 
-                    HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "5:00PM-22:00PM",),
-                    HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "8AM-6PM",),
-                     HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
-                     HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
-                     HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
-                     HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Oral traditions tell that Vat Aham was built near the site chosen by Fa Ngum, founder of the Kingdom of Lane Xang. The site was selected for the erection of an altar dedicated to the town’s deities, Pou Gneu Gna Gneu.", textTitle: "Wat Aham",textOpenhour: "7:30AM-20:00PM",),
-                    HistoryPlaces(imgProvider: AssetImage("assets/images/image2.png"), textSubtitle: "Developing", textTitle: "continue",textOpenhour: "developing",),
-                        ],)
+                        Card(
+                          child: Image.asset('assets/images/lpb2.jpg'),
+                        ),
+                        Card(
+                          child: Text(
+                              'ເມືອງຫລວງພະບາງສ້າງຕັ້ງຂື້ນກ່ອນໜ້ານີ້ປະມານ 1.200 ປີ, ໂດຍການໄຫຼພົບກັນລະຫວ່າງແມ່ນໍ້າຄານ ແລະແມ່ນໍ້າຂອງຢູ່ໃນໃຈກາງພາກເໜືອຂອງລາວ. ຫຼວງພະບາງເປັນທັງເມືອງຫຼວງຂອງອານາຈັກບູຮານ ແລະ ຍຸກສະໄໝໃໝ່.ຊື່ເດີມຂອງຫຼວງພະບາງປະກອບມີຫຼາຍຊື່ເຊັ່ນ: ເມືອງຊວາ, ຊຽງທອງ ແລະລ້ານຊ້າງ; ຊື່ເມືອງໃນປະຈຸບັນແມ່ນໄດ້ມາຈາກຊື່ຂອງພະພຸດທະຮູບພະບາງ, ພະບາງແມ່ນຮູບພະພຸດທະຮູບທີ່ສັກສິດ ແລະເປັນທີ່ເຄົາລົບບູຊາຂອງປະຊາຊົນ ເຊິ່ງໄດ້ປະດິດສະຖານຢູ່ໃນຫໍພິພິທະພັນແຫ່ງຊາດໃນໃຈກາງເມືອງປັດຈຸບັນຫຼວງພະບາງເປັນທີ່ຮູ້ຈັກກັນດີໃນການດູແລຮັກສາຄວາມເປັນເອກະລັກສະເພາະຂອງວັດ ສະຖາປັດຕະຍະກຳ ແບບດັ້ງເດີມ ອາຄານອານານິຄົມ ແລະຄວາມສວຍງາມແບບທຳມະຊາດອ້ອມຂ້າງແຂວງ. ເຖິງແມ່ນວ່າເມືອງຫລວງພະບາງເປັນເມືອງທີ່ຕ້ອນຮັບນັກທ່ອງທ່ຽວຈາກທົ່ວທຸກມຸມໂລກ ແຕ່ມັນຍັງມີຄວາມສຳຄັນທາງດ້ານການເມືອງ, ການສຶກສາ ແລະເປັນສູນກາງການຄ້າທີ່ ສຳຄັນສຳລັບວັດທະນາທຳ ຫຼາຍປະເທດໃນພາກເໜືອຂອງລາວ.ຕະຫຼາດເຊົ້າຂອງຫຼວງພະບາງ ບ່ອນທີ່ທ່ານສາມາດພົບເຫັດປ່າສົດໆຈາກພູເຂົາໃກ້ໆ ແຜ່ນແພທີ່ເຮັດດ້ວຍມືທີ່ເປັນເອກະ ລັກສະເພາະ ແລະມັນແມ່ນສະຖານທີ່ທ້ອງຖິ່ນທີ່ຈະຊື້ສ່ວນປະກອບໃນການປຸງອາຫານ. ເມືອງນີ້ເຕັມໄປດ້ວຍບັນດາວັດວາອາຮາມທີ່ສວຍງາມເຊັ່ນ: ວັດຊຽງທອງ, ວັດໃໝ່ ແລະວັດວິຊຸນ, ມະຫາວິທະຍາໄລສຸພານຸວົງ ແລະວິທະຍາໄລຄູທີ່ ສຳຄັນໃນປະຈຸບັນເຊັ່ນດຽວກັບຫໍພິພິທະພັນແຫ່ງຊາດ. ນອກຈາກນີ້ຍັງມີເຮືອຈັກ ແລະຊາວປະມົງອາໄສຢູ່ລຽບຕາມແມ່ນໍ້າຂອງ ລວມທັງເຮືອບິນລົງຈອດຢູ່ສະໜາມບິນສາກົນຫຼວງພະບາງ, ເປັນເມືອງທີ່ແຕກຕ່າງໃນເມື່ອກ່ອນ ແຕ່ບໍ່ທຳ ລາຍປະຫວັດສາດ ແລະປະເພນີແຂວງຫຼວງພະບາງຕັ້ງຢູ່ພາກກາງຂອງພາກເໜືອຂອງປະເທດລາວ, ຕິດກັບແຂວງອຸດົມໄຊ, ຜົ້ງສາລີ ແລະຫົວພັນໄປທາງທິດເໜືອ, ນະຄອນຫຼວງວຽງຈັນ ແລະໄຊຍະບູລີ ໄປທາງທິດໃຕ້ ແລະທິດຕາເວັນຕົກສຽງໃຕ້, ແຂວງຊຽງຂວາງໄປທາງທິດຕາເວັນອອກແຂວງຫຼວງພະບາງມີປະຊາກອນຫຼາຍກ່ວາ 400,000 ຄົນ, ໃນນັ້ນມີ 8 ຊົນເຜົ່າແຕກຕ່າງກັນ. ຊົນເຜົ່າກືມມຸມັກຈະສະກົດວ່າຂະມຸ ເປັນຊົນເຜົ່າທີ່ໃຫ່ຍທີ່ສຸດໃນແຂວງ ແລະມີປະຊາກອນສ່ວນໃຫ່ຍກວມເອົາປະມານ 44% ຂອງປະຊາ ກອນທັງໝົດ, ຊົນເຜົ່າມົ້ງແມ່ນອັນດັບສອງຂອງຊົນເຜົ່າສ່ວນນ້ອຍກວມ (16%), ໃນເຂດທົ່ງພຽງເຜົ່າລາວລຸ່ມກວມ 39% ຂອງປະຊາກອນ ແລະປະຊາກອນສ່ວນໃຫຍ່ອາໄສຢູ່ເຂດທົ່ງພຽງ, ຮ່ອມພູ ແລະຕົວເມືອງຫຼວງພະບາງ.ຫຼັກຖານທາງໂບຮານຄະດີສະແດງໃຫ້ເຫັນວ່າເມືອງຫຼວງພະບາງມີມາຕັ້ງແຕ່ປະມານ 8000 ປີ ກ່ອນ ຄ. ສ ອານາຈັກ ທຳອິດຂອງລາວແມ່ນອານາຈັກລານຊາງ ສ້າງຕັ້ງຂື້ນໃນສະຕະວັດທີ 14 ໂດຍເຈົ້າຟ້າງຸ່ມ ຫລັງຈາກທ່ານໄດ້ເອົາຊະນະແລະທ້ອນໂຮມອານາຈັກເປັນໜຶ່ງດຽວກັນຄື ຊຽງຂວາງ, ພູພຽງ ໂຄລາດ ແລະຫຼວງພະບາງ, ຊື່ທຳອິດຂອງອານາຈັກແມ່ນ ລາຊະອານາຈັກລານຊາງຕໍ່ມາໃນປີຄ. ສ 1357 ໄດ້ປ່ຽນຊື່ໃໝ່ ເປັນເມືອງຊຽງດົງຊຽງທອງ ໂດຍຄົນທ້ອງຖິ່ນ ຫຼັງຈາກນັ້ນບໍ່ດົນ ເຈົ້າຟ້າງຸ່ມ ໄດ້ຮັບພະພຸດທະຮູບທອງຄຳ ອົງໜື່ງທີ່ມີຊື່ວ່າພະບາງ ເປັນຂອງຂວັນຈາກກະສັດຂະແມ. ແລະກາຍເປັນເມືອງທີ່ຈະເລີນຮຸ່ງເຮືອງ ຈົນກາຍເປັນທີ່ຮູ້ກັນດີວ່າຫຼວງພະບາງ. ຫຼວງພະບາງແມ່ນນະຄອນຫຼວງຂອງອານາຈັກລານຊາງ ຈົນຮອດປີ ຄ. ສ 1560 ເຈົ້າເສດຖາທິລາດ ໄດ້ຍົກໃຫ້ວຽງຈັນເປັນນະຄອນຫຼວງແທນຫຼວງພະບາງ. (ແຕ່ຫຼວງພະບາງຍັງເປັນສູນກາງທາງສາສະໜາສຳຄັນຂອງປະເທດ) ໃນສະໄໝ ພະເຈົ້າສຸລິຍະວົງສາ, ບັນດາເມືອງຕ່າງໆໄດ້ຕິດຕໍ່ພົວພັນກັບທູດຕາເວັນຕົກ ທີ່ສ້າງຕັ້ງຂື້ນໃນກາງສະຕະວັດທີ 17 ຫຼັງຈາກພະອົງໄດ້ເສຍຊີວິດໃນປີ 1694, ອານາຈັກລານຊາງຖືກແບ່ງອອກເປັນສາມອານາຈັກຄື: ອານາຈັກວຽງຈັນ, ຈຳ ປາສັກ ແລະອານາຈັກຫຼວງພະບາງໃນທ້າຍສະຕະວັດທີ 19, ເມືອງຫຼວງພະບາງຖືກໄພຂົ່ມຂູ່ໂດຍໂຈນທຸງດຳ. ພວກໂຈນໄດ້ທຳລາຍຮູບປັ້ນພະພຸດທະຮູບ, ວັດວາອາຮາມ ແລະຫລັກຖານປະຫວັດສາດຫລາຍຢ່າງ.ພາຍໃຕ້ການປົກຄອງຂອງເຈົ້າຊີວິດ ສີສະຫວ່າງວົງ(1904 – 1959) ໄດ້ມີການເປີດໂຄງການບູລະນະ ແລະປັບປຸງ, ເຊິ່ງຫລາຍໂຄງການຍັງມີຢູ່ໃນປະຈຸບັນ. ຕຶກອາຄານທີ່ໄດ້ມີອິດທິພົນຈາກຝຣັ່ງໄດ້ເລີ້ມປະກົດຂື້ນໃນທ້າຍສັດຕະວັດ 1800, ໂດຍມີການປະສົມປະສານຂອງສະຖາປັດ ຕະຍະກຳ ລາວໄທລື້, ມຽນມາ, ຈີນ ແລະໄທ.'),
+                        )
                       ],
-                    
-                    
-                    ),
-                  ),
-                  
-          
-                ],
-                
+                    )
+                  ],
                 ),
-                
-
+              ),
+            ],
+          ),
         ),
-        
       ),
-      
-     
     );
   }
 }

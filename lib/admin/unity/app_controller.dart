@@ -11,6 +11,7 @@ import 'package:getapi/admin/unity/app_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AppContrller extends GetxController {
+  var networkImageUrls = <String>[].obs;
 
    RxList<dynamic> files = <dynamic>[].obs; 
   RxList nameFiles = <String>[].obs;
